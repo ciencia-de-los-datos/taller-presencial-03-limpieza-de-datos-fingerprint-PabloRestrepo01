@@ -5,11 +5,11 @@ import pandas as pd
 
 
 def load_data(input_file):
-    df = pd.read_csv(input_file)
-    return df
+
+    data = pd.read_csv(input_file, sep="\t")
+    return data
 
 
-#print(load_data("input.txt"))
 
 def create_fingerprint(df):
     """Cree una nueva columna en el DataFrame que contenga el fingerprint de la columna 'text'"""
@@ -25,23 +25,8 @@ def create_fingerprint(df):
     df["key"] = df["key"].str.split()
     stemmer = nltk.PorterStemmer()
     df["key"] = df["key"].apply(lambda x: [stemmer.stem(word) for word in x])    
-    df["key"] = df["key"].apply(lambda x: sorted(set(x)))
-    df["key"] = df["key"].str.join(" ")
 
     return df
-
-
-
-
-    # 1. Copie la columna 'text' a la columna 'fingerprint'
-    # 2. Remueva los espacios en blanco al principio y al final de la cadena
-    # 3. Convierta el texto a minúsculas
-    # 4. Transforme palabras que pueden (o no) contener guiones por su version sin guion.
-    # 5. Remueva puntuación y caracteres de control
-    # 6. Convierta el texto a una lista de tokens
-    # 7. Transforme cada palabra con un stemmer de Porter
-    # 8. Ordene la lista de tokens y remueve duplicados
-    # 9. Convierta la lista de tokens a una cadena de texto separada por espacios
 
 
 def generate_cleaned_column(df):
@@ -56,23 +41,16 @@ def generate_cleaned_column(df):
     return df
 
 
-
-
 def save_data(df, output_file):
-    """Guarda el DataFrame en un archivo"""
-    # Solo contiene una columna llamada 'texto' al igual
-    # que en el archivo original pero con los datos limpios
-
+    
     df = df.copy()
     df = df[["cleaned"]]
-    df = df.rename(columns={"cleaned": "text"})
-    df.to_csv(output_file, index=False)
-
+    df = df.rename(columns = {"cleaned": "text"})
+    df.to_csv(output_file, sep = "\t", index = False)
 
 
 def main(input_file, output_file):
     """Ejecuta la limpieza de datos"""
-
 
     df = load_data(input_file)
     df = create_fingerprint(df)
