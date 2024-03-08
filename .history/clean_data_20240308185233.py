@@ -12,20 +12,22 @@ def load_data(input_file):
 #print(load_data("input.txt"))
 
 def create_fingerprint(df):
-    
+    """Cree una nueva columna en el DataFrame que contenga el fingerprint de la columna 'text'"""
+
     df = df.copy()
-    df["fingerprint"] = df["text"]
-    df["fingerprint"] = (
-        df["fingerprint"]
-        .str.strip()
-        .str.lower()
-        .str.replace("-","")
-        .str.replace(".","")
-        .str.split()
-        .apply(lambda x: [nltk.PorterStemmer().stem(w) for w in x])
-        .apply(lambda x: sorted(set(x)))
-        .str.join(" ")
+    df["key"] = df["text"]
+    df["key"] = df["key"].str.strip()
+    df["key"] = df["key"].str.lower()
+    df["key"] = df["key"].str.replace("-", "")
+    df["key"] = df["key"].str.translate(
+        str.maketrans("", "", "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
     )
+    df["key"] = df["key"].str.split()
+    stemmer = nltk.PorterStemmer()
+    df["key"] = df["key"].apply(lambda x: [stemmer.stem(word) for word in x])    
+    df["key"] = df["key"].apply(lambda x: sorted(set(x)))
+    df["key"] = df["key"].str.join(" ")
+
     return df
 
 
